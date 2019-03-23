@@ -48,20 +48,52 @@ public class SpellCheckerController {
     	String lingua=tendina.getValue();
     	model.loadDictionary(lingua.toLowerCase());
     	List<String> inputTextList=new LinkedList<String>();
-    	String s=txtTesto.getText().replaceAll("[.,\\/#!$%\\^&\\*;:{}=\\-_`~()\\[\\]\"] "," ");
+    	String s=txtTesto.getText().replaceAll("[.,\\/#!?$%\\^&\\*;:{}=\\-_`~()\\[\\]\"] "," ").toLowerCase();
     	String p[]=s.split(" ");
     	for(String par:p) {
     		inputTextList.add(par);
     	}
-    	List<String> errori=new LinkedList<String>();
-		for(RichWord rw:model.spellCheckText(inputTextList))
-			if(rw.isTrovata()==false)
-				errori.add(rw.getParola());
-    	String r="";
-    	for(String str:errori)
-    		r+=str+"\n";
-    	txtErrori.appendText(r);
-    	txtResErr.setText("The text contains "+errori.size()+" errors.");
+    	List<String> l1=new LinkedList<String>();
+    	List<String> l2=new LinkedList<String>();
+    	List<String> a1=new ArrayList<String>();
+    	List<String> a2=new ArrayList<String>();
+    	
+    	/**
+    	 * Confrontare le differenze di prestazioni tra le due implementazioni
+    	 *  utilizzando sia un ArrayList ed una
+    	 *  LinkedList . Riempire la tabella nella pagina seguente con i tempi di
+    	 *  esecuzione per ciascun caso.
+    	 *  l1=0.8389sec
+    	 *  l2=0.8053sec
+    	 *  a1=0.9059sec
+    	 *  a2=0.7382sec
+    	 *  
+    	 *  Quale implementazione utilizza il metodo contains di Java List ?
+    	 */
+    	for(RichWord rw:model.spellCheckTextLinear(inputTextList))
+			if(rw.isTrovata()==false) {
+				l1.add(rw.getParola());
+				a1.add(rw.getParola());
+			}
+		for(RichWord rw:model.spellCheckTextDichotomic(inputTextList))
+			if(rw.isTrovata()==false){
+				l2.add(rw.getParola());
+				a2.add(rw.getParola());
+			}
+    	String rl1="";
+    	String rl2="";
+    	String ra1="";
+    	String ra2="";
+    	for(String str:l1)
+    		rl1+=str+"\n";
+    	for(String str:l2)
+    		rl2+=str+"\n";
+    	for(String str:a1)
+    		ra1+=str+"\n";
+    	for(String str:a2)
+    		ra2+=str+"\n";
+    	txtErrori.appendText(rl1);
+    	txtResErr.setText("The text contains "+l1.size()+" errors.");
     	float tfine=System.nanoTime();
     	txtResTime.setText("Spell check completed in "+((tfine-tinizio)/Math.pow(10,9))+" seconds.");
     	

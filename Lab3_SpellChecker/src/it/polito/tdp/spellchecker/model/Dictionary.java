@@ -32,7 +32,7 @@ public class Dictionary {
 			}
 	}
 	
-	public List<RichWord> spellCheckText(List<String> inputTextList ) {
+	public List<RichWord> spellCheckTextLinear(List<String> inputTextList ) {
 		tinizio=System.nanoTime();
 		parole.clear();
 		
@@ -43,6 +43,47 @@ public class Dictionary {
 				if(s.equals(p))
 					t=true;
 				}
+			parole.add(new RichWord(s,t));
+		}
+		
+		return parole;
+	}
+	
+	public List<RichWord> spellCheckTextDichotomic(List<String> inputTextList ) {
+		tinizio=System.nanoTime();
+		parole.clear();
+		
+		for(String s:inputTextList) {
+			int inizio=0;
+			int fine=dizionario.size();
+			boolean t=false;
+			s.toLowerCase().replaceAll("[.,\\/#!?$%\\^&\\*;:{}=\\-_`~()\\[\\]\"]","");
+			
+			while(t==false&&inizio<fine) {
+				String str=dizionario.get(inizio+((fine-inizio)/2));
+				if(fine-inizio>1) {
+					if(s.compareTo(str)<0) {
+						fine-=((fine-inizio))/2;
+					}
+					else if(s.compareTo(str)>0) {
+						inizio+=((fine-inizio))/2;
+					}
+					else if(s.compareTo(str)==0){
+						t=true;
+					}
+				}
+				else {
+					if(s.compareTo(str)<0) {
+						fine-=(fine-inizio);
+					}
+					else if(s.compareTo(str)>0) {
+						inizio+=(fine-inizio);
+					}
+					else if(s.compareTo(str)==0){
+						t=true;
+					}
+				}
+			}
 			parole.add(new RichWord(s,t));
 		}
 		
